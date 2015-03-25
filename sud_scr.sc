@@ -6,13 +6,13 @@ root
 		desc:bla bla
 		id:forest_01
 		exits
-			w:forest_02
+			west:forest_02
 	room
 		name:A dark forest
 		desc:bla bla
 		id:forest_02
 		exits
-			e:forest_01
+			east:forest_01
 	room
 		name:Outside a cottage
 		desc:bla bla

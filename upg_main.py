@@ -28,19 +28,34 @@ class Game():
 	def __init__(self):
 		#alises, list of lists of commands that should be considered the same
 		#e.g., "w" and "west", "x" and "examine", usw
-		self.aliases = []
-		self.aliases.append(["w", "west"])
-		self.aliases.append(["e", "east"])
-		self.aliases.append(["n", "north"])
-		self.aliases.append(["s", "south"])
+		self.aliases = {}
+		self.aliases["w"] = "west"
+		self.aliases["e"] = "east"
+		self.aliases["n"] = "north"
+		self.aliases["s"] = "south"
+		self.aliases["l"] = "look"
 
 		self.playerLocation = None
 
-def parseCommand(command):
-	command = command.strip()
-	command = re.sub(" +", " ", command)
-	print("<", command, ">", sep="")
-	return command
+	def parseCommand(self, command):
+		command = command.strip()
+		command = re.sub(" +", " ", command)
+		
+		arg = None
+		if " " in command: #if we have an argument...
+			head, arg = command.split(" ", 1)
+		else:
+			head = command
+
+		if head in self.aliases:
+			head = self.aliases[head]
+
+		return head, arg
+
+	def execCommand(self, command, arg = None):
+		#print("execing:",command, arg)
+		if command in self.playerLocation.exits:
+			print("Going to:", self.playerLocation.exits[command])
 
 def main():
 	scr = scripty.loadScript('sud_scr.sc')
@@ -51,20 +66,21 @@ def main():
 	rooms = [Room(b) for b in scr.getBlock("room")]
 	rd = {}
 	for room in rooms:
-		print(room.name)
+		"""print(room.name)
 		print(room.ident)
 		print(room.description)
 		print(room.exits)
-		print()
+		print()"""
 		rd[room.ident] = room
-	print(rd)
+	#print(rd)
 
 	gameinfo = scr.getBlock("gameinfo")
 
 	g = Game()
 	g.playerLocation = rd[gameinfo.getKvp("start").value]
-	print(g.playerLocation)
+	#print(g.playerLocation)
 
-	print(parseCommand("   foo  bar "))
+	#print(g.parseCommand("   w  bar baz"))
+	g.execCommand(*g.parseCommand("w"))
 
 main()
